@@ -24,15 +24,18 @@ def process_ini(inifile, ymlfile):
     with open(ymlfile) as file:
         lines = file.readlines()
 
+    # loop through file and indent each line properly
     count = 0
     for line in lines:
-        string_length = len(line)+6    # will be adding 4 extra spaces
+        string_length = len(line)+6    # will be adding 6 extra spaces for proper yaml indentation
         lines[count]=line.rjust(string_length)
         count += 1
 
-    lines.insert(0, "#\n# conf files under ./system/local\n#\n  @todo(dirname):\n    @todo(conf file):\n")
+    # add conf file name
+    lines.insert(0, "    @todo(conf file):\n")
 
     modified_yaml = open(ymlfile+"mod", "w")
+#    modified_yaml.write("#\n# conf files under ./system/local\n#\n  @todo(dirname):\n")
     for element in lines:
         modified_yaml.write(element)
 
