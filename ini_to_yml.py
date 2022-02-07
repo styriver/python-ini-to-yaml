@@ -19,7 +19,7 @@ def process_ini(inifile, ymlfile):
                 datamap[section].update({name: value})
 
     with open(ymlfile, "w") as tmpYmlfile:
-        yaml.dump(datamap, tmpYmlfile, default_flow_style=False)
+        yaml.dump(datamap, tmpYmlfile, default_flow_style=False,sort_keys=False)
 
     with open(ymlfile) as file:
         lines = file.readlines()
