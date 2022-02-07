@@ -26,12 +26,11 @@ def process_ini(inifile, ymlfile):
 
     count = 0
     for line in lines:
-        string_length = len(line)+4    # will be adding 4 extra spaces
+        string_length = len(line)+6    # will be adding 4 extra spaces
         lines[count]=line.rjust(string_length)
         count += 1
 
-    lines.insert(0, "dir:\n")
-    lines.insert(1, "  outputs:\n")
+    lines.insert(0, "#\n# conf files under ./system/local\n#\n  @todo(dirname):\n    @todo(conf file):\n")
 
     modified_yaml = open(ymlfile+"mod", "w")
     for element in lines:
