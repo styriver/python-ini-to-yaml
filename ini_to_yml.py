@@ -5,10 +5,11 @@ import yaml
 import argparse
 from pathlib import Path
 import os
+import sys
 
 def process_ini(inifile):
     file_name = Path(inifile).stem
-    config = configparser.ConfigParser(allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True, strict=False, interpolation=None)
     config.read(inifile)
     file_name = Path(inifile).stem
     file_path = str(Path(inifile).parent)
@@ -24,28 +25,32 @@ def process_ini(inifile):
                 datamap[section].update({name: value})
 
     # dump yaml
-    with open(yamlfile, "w") as newYaml:
-        yaml.dump(datamap, newYaml, default_flow_style=False,sort_keys=False)
+    if len(datamap) != 0:
+        with open(yamlfile, "w") as newYaml:
+            yaml.dump(datamap, newYaml, default_flow_style=False,sort_keys=False)
 
-    # open to add conf file name and indent properly
-    with open(yamlfile, "r") as file:
-        lines = file.readlines()
+        # open to add conf file name and indent properly
+        with open(yamlfile, "r") as file:
+            lines = file.readlines()
 
-    # loop through file and indent each line properly
-    count = 0
-    for line in lines:
-        string_length = len(line)+6    # will be adding 6 extra spaces for proper yaml indentation
-        lines[count] = line.rjust(string_length)
-        count += 1
+        # loop through file and indent each line properly
+        count = 0
+        for line in lines:
+            string_length = len(line)+6    # will be adding 6 extra spaces for proper yaml indentation
+            lines[count] = line.rjust(string_length)
+            count += 1
 
-    # add conf file name
-    lines.insert(0, "    " + file_name+": # " + file_name + ".conf\n")
+        # add conf file name
+        lines.insert(0, "    " + file_name+": # " + file_name + ".conf\n")
 
-    indented_yaml = open(yamlfile, "w")
-    for element in lines:
-        indented_yaml.write(element)
+        indented_yaml = open(yamlfile, "w")
+        for element in lines:
+            indented_yaml.write(element)
 
-    indented_yaml.close()
+        sys.stdout.write("Yaml file written - " + yamlfile)
+        indented_yaml.close()
+    else:
+        sys.stdout.write("Skipping conf file no sections detected  - " + inifile)
 
 
 def main():
