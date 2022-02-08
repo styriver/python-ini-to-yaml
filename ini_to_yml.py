@@ -57,11 +57,9 @@ def main():
     parser = argparse.ArgumentParser(description="Convert a basic ini file to yml")
     parser.add_argument('--in', action="store", dest="workdir", required=True, help="Input ini file")
     parser.add_argument('--out', action="store", dest="outdir", required=True, help="yaml output master")
-    parser.add_argument('--confdir', action="store", dest="confdir", required=True, help="conf file dir")
     args = vars(parser.parse_args())
     working_dir = args['workdir']
     out_dir = args['outdir']
-    conf_dir = args['confdir']
 
     files = Path(working_dir).glob('*.conf')
     inifile = ''
@@ -85,7 +83,7 @@ def main():
     files = Path(working_dir).glob('*.yaml')
     with open(out_dir, 'a+') as outfile:
         file_path = str(Path(inifile).parent)
-        outfile.write("#\n# conf files under ." + os.sep + conf_dir + "\n#\n  " + conf_dir + ":\n")
+        outfile.write("#\n# conf files under ." + os.sep + file_path + "\n#\n  " + file_path + ":\n")
         for file_name in files:
             with open(file_name, 'r') as readfile:
                 outfile.write(readfile.read() + "\n")
@@ -93,3 +91,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
