@@ -47,10 +47,10 @@ def process_ini(inifile):
         for element in lines:
             indented_yaml.write(element)
 
-        sys.stdout.write("Yaml file written - " + yamlfile)
+        sys.stdout.write("Yaml file written - " + yamlfile + "\n")
         indented_yaml.close()
     else:
-        sys.stdout.write("Skipping conf file no sections detected  - " + inifile)
+        sys.stdout.writelines("Skipping conf file no sections detected  - " + file_name + ".conf" + "\n")
 
 
 def main():
