@@ -57,9 +57,11 @@ def main():
     parser = argparse.ArgumentParser(description="Convert a basic ini file to yml")
     parser.add_argument('--in', action="store", dest="workdir", required=True, help="Input ini file")
     parser.add_argument('--out', action="store", dest="outdir", required=True, help="yaml output master")
+    parser.add_argument('--splunk_dir_key', action="store", dest="keydir", required=False, default='etc', help="yaml output")
     args = vars(parser.parse_args())
     working_dir = args['workdir']
     out_dir = args['outdir']
+    relative_path = args['keydir']
 
     files = Path(working_dir).glob('*.conf')
     inifile = ''
@@ -77,13 +79,18 @@ def main():
             stripped_spaces.write(orig_line.lstrip())
         stripped_spaces.close()
 
+        # process ini file
         process_ini(inifile)
+
+    # get relative path for yamlfile conf header
+    conf_header = os.path.relpath(inifile, relative_path)
+    conf_header = os.path.dirname(conf_header)
 
     # merge all *.conf conversions to master
     files = Path(working_dir).glob('*.yaml')
     with open(out_dir, 'a+') as outfile:
         file_path = str(Path(inifile).parent)
-        outfile.write("#\n# conf files under ." + os.sep + file_path + "\n#\n  " + file_path + ":\n")
+        outfile.write("#\n# conf files under ." + os.sep + conf_header + "\n#\n  " + conf_header + ":\n")
         for file_name in files:
             with open(file_name, 'r') as readfile:
                 outfile.write(readfile.read() + "\n")
@@ -91,4 +98,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
