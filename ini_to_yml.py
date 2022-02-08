@@ -62,8 +62,21 @@ def main():
     out_dir = args['outdir']
     files = Path(working_dir).glob('*.conf')
     inifile = ''
+
     for inifile in files:
-      process_ini(inifile)
+
+        # open file and remove any leading spaces as this leads to not detecting section properly
+        with open(inifile, "r") as orgifile:
+            orig_lines = orgifile.readlines()
+        orgifile.close()
+
+        # strip leading spaces and write back out prior to processing
+        stripped_spaces = open(inifile, "w")
+        for orig_line in orig_lines:
+            stripped_spaces.write(orig_line.lstrip())
+        stripped_spaces.close()
+
+        process_ini(inifile)
 
     # merge all *.conf conversions to master
     files = Path(working_dir).glob('*.yaml')
