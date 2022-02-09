@@ -57,15 +57,17 @@ def main():
     parser = argparse.ArgumentParser(description="Convert a basic ini file to yml")
     parser.add_argument('--in', action="store", dest="workdir", required=True, help="Input ini file")
     parser.add_argument('--out', action="store", dest="outdir", required=True, help="yaml output master")
-    parser.add_argument('--splunk_dir_key', action="store", dest="keydir", required=False, default='etc', help="yaml output")
+    parser.add_argument('--parse_key', action="store", dest="parsekey", required=False, default='etc', help="yaml output")
     args = vars(parser.parse_args())
+    inifile = ''
+    
+    # args
     working_dir = args['workdir']
     out_dir = args['outdir']
-    relative_path = args['keydir']
+    parse_key = args['parsekey']
 
+    # grab all ini files under directory
     files = Path(working_dir).glob('*.conf')
-    inifile = ''
-
     for inifile in files:
 
         # open file and remove any leading spaces as this leads to not detecting section properly
@@ -82,11 +84,20 @@ def main():
         # process ini file
         process_ini(inifile)
 
-    # get relative path for yamlfile conf header
-    conf_header = os.path.relpath(inifile, relative_path)
-    conf_header = os.path.dirname(conf_header)
+    # construct relative path for yaml file array header
+    dirs = os.path.dirname(inifile).split(os.path.sep)
+    start_append = False
+    conf_header = ''
+    for conf_header_dir in dirs:
+        if len(conf_header) != 0:
+            conf_header += os.path.sep
+        if conf_header_dir == parse_key:
+            start_append = True
+        else:
+            if start_append:
+                conf_header += conf_header_dir
 
-    # merge all *.conf conversions to master
+    # add conf header and merge all yaml files for directory
     files = Path(working_dir).glob('*.yaml')
     with open(out_dir, 'a+') as outfile:
         file_path = str(Path(inifile).parent)
