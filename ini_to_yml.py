@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--parse_key', action="store", dest="parsekey", required=False, default='etc', help="yaml output")
     args = vars(parser.parse_args())
     inifile = ''
-    
+
     # args
     working_dir = args['workdir']
     out_dir = args['outdir']
@@ -105,6 +105,9 @@ def main():
         for file_name in files:
             with open(file_name, 'r') as readfile:
                 outfile.write(readfile.read() + "\n")
+                readfile.close()
+                os.remove(readfile.name)
+    outfile.close()
 
 
 if __name__ == '__main__':
